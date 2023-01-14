@@ -18,6 +18,9 @@ app.use('/board-qna', boardQna)
 const comment = require('./routes/comment');
 app.use('/comment', comment)
 
+const recomment = require('./routes/recomment');
+app.use('/recomment', recomment)
+
 app.listen(3000, () => {
   console.log('http://localhost:3000');
 });

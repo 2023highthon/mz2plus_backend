@@ -14,8 +14,8 @@ connection.connect();
 router.use(express.json());
 
 router.post('/', (req, res) => {
-    let {content, date, article_id, board_id, user} = req.body;
-    user = atob(req.session.user).split("&")[0];
+    let {content, date, article_id, board_id} = req.body;
+    let user = atob(req.session.user).split("&")[0];
     if(board_id == "board" || board_id == "qna") {
         connection.query(`insert into comment (content, date, article_id, board_id, user) values (?, ?, ?, ?, ?)`, [content, date, article_id, board_id, user], function (error, results, fields) {
             if (error) throw error;
