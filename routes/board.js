@@ -22,7 +22,8 @@ router.get('/', (req, res) => {
 
 router.post('/', (req, res) => {
     const {content, upload_date, title} = req.body;
-    const user = "asdf"//atob(req.session.user).split("&")[0];
+    if(req.session.user == null) res.status(400).send({message: '로그인이 필요합니다.'});
+    const user = atob(req.session.user).split("&")[0];
     console.log(user)
     connection.query(`insert into board (title, content, upload_date, user) values (?, ?, ?, ?)`, [title, content, upload_date, user], function (error, results, fields) {
         if (error) throw error;
@@ -34,6 +35,7 @@ router.get("/:id", (req, res) => {
     const id = req.params.id;
     connection.query(`select * from board where article_id=?`, [id], function (error, results, fields) {
         if (error) throw error;
+        connection.query(`update board set count = count+1 where article_id = ${id}`)
         res.send(results);
     });
 });

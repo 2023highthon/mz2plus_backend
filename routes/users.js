@@ -18,7 +18,6 @@ router.use(session({
     saveUninitialized: true,
 }))
 
-
 router.post('/register', (req, res) => {
     const {id, password, name, date, profile_img} = req.body;
     connection.query(`select * from users where id=?`, [id], function (error, results, fields) {
