@@ -20,13 +20,13 @@ router.use(session({
 
 
 router.post('/register', (req, res) => {
-    const {id, password, name, age, profile_img} = req.body;
+    const {id, password, name, date, profile_img} = req.body;
     connection.query(`select * from users where id=?`, [id], function (error, results, fields) {
         if (error) throw error;
         if(results.length === 0){
-            connection.query(`insert into users (id, password, name, age, profile_img) values (?, ?, ?, ?, ?)`, [id, password, name, age, profile_img], function (error, results, fields) {
+            connection.query(`insert into users (id, password, name, date, profile_img) values (?, ?, ?, ?, ?)`, [id, password, name, date, profile_img], function (error, results, fields) {
                 if (error) throw error;
-                res.send(results);
+                res.send({message: '회원가입이 완료되었습니다'});
             });
         }else{
             res.send({message: '이미 존재하는 아이디입니다.'});
@@ -41,10 +41,34 @@ router.post('/login', (req, res) => {
         if(results.length === 0){
             res.send({message: '아이디 또는 비밀번호가 잘못되었습니다.'});
         }else{
-            req.session.user = results[0];
-            res.send(req.session.user);
+            req.session.user = btoa(results[0].id + "&" +  results[0].password)
+            res.send(req.session);
         }
     });
+});
+
+router.delete('/logout', (req, res) => {
+    req.session.destroy();
+    res.send({message: '로그아웃 되었습니다.'});
+});
+
+router.get('/info', (req, res) => {
+    if(req.session.user){
+        const [id, password] = atob(req.session.user).split("&");
+        connection.query(`select * from users where id=? and password=?`, [id, password], function (error, results, fields) {
+            if (error) throw error;
+            res.send({
+                "user_pk": results[0].user_pk,
+                "name": results[0].name,
+                "id": results[0].id,
+                "password": results[0].password,
+                "age": results[0].age,
+                "profile_Img": results[0].profile_Img
+            });
+        });
+    }else{
+        res.send({message: '로그인이 필요합니다.'});
+    }
 });
 
 module.exports = router;
