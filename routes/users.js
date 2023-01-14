@@ -39,7 +39,7 @@ router.post('/login', (req, res) => {
     connection.query(`select * from users where id=? and password=?`, [id, password], function (error, results, fields) {
         if (error) throw error;
         if(results.length === 0){
-            res.send({message: '아이디 또는 비밀번호가 잘못되었습니다.'});
+            res.status(401).send({message: '아이디 또는 비밀번호가 일치하지 않습니다.'});
         }else{
             req.session.user = btoa(results[0].id + "&" +  results[0].password)
             res.send(req.session);
@@ -70,5 +70,17 @@ router.get('/info', (req, res) => {
         res.send({message: '로그인이 필요합니다.'});
     }
 });
+
+router.get('/overlap', (req, res) => {
+    const {id} = req.body;
+    connection.query(`select * from users where id=?`, [id], function (error, results, fields) {
+        if (error) throw error;
+        if(results.length === 0){
+            res.send({message: '사용 가능한 아이디입니다.'});
+        }else{
+            res.send({message: '이미 존재하는 아이디입니다.'});
+        }
+    });
+})
 
 module.exports = router;

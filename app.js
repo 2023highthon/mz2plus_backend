@@ -15,6 +15,9 @@ app.use('/board', board)
 const boardQna = require('./routes/boardQna');
 app.use('/board-qna', boardQna)
 
+const comment = require('./routes/comment');
+app.use('/comment', comment)
+
 app.listen(3000, () => {
   console.log('http://localhost:3000');
 });

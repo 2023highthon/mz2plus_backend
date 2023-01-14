@@ -4,7 +4,7 @@ const router = express.Router();
 router.use(express.json());
 
 router.get('/', (req, res) => {
-    res.send('hello world');
+  res.send(req.body);
 });
 
 module.exports = router;
